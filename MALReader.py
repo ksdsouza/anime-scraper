@@ -11,7 +11,7 @@ class Anime:
         self.release = release
         self.synopsis = synopsis
         self.genres = genres
-        self.synopsis_to_print = synopsis_to_print = self.synopsis[0:97] + "..." if(len(self.synopsis) > 97) else synopsis
+        self.synopsis_to_print = self.synopsis[0:97] + "..." if(len(self.synopsis) > 97) else synopsis
     def __str__(self):
                 return "{" + 'title:' + str(self.title) + "," +\
                 'numEps:' +  self.numEps + "," +\
@@ -31,7 +31,6 @@ class MALSeason:
     def __map_to_string(season_num):
         options = {0:"Winter", 1:"Spring", 2:"Summer", 3:"Fall"}
         return options[season_num]
-
 
     def __init__(self, season=""):
         if(season == "" and this_season == 0):
@@ -57,6 +56,7 @@ class MALSeason:
         else:
             self.season = self.season + 1
         return self
+
     def decrement(self):
         if(self.season == 0):
             self.season = 3
@@ -64,6 +64,15 @@ class MALSeason:
         else:
             self.season = self.season - 1
         return self
+
+    def get_year(self):
+        return self.year
+
+    def get_season(self):
+        return MALSeason.__map_to_string(self.season)
+
+    def get_url_for_season(self):
+        return "https://myanimelist.net/anime/season/" + str(self.year) + "/" + MALSeason.__map_to_string(self.season)
 
     def __str__(self):
         return MALSeason.__map_to_string(self.season) + " " + str(self.year)
