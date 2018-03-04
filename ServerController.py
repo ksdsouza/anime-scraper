@@ -1,10 +1,14 @@
 from pymongo import MongoClient
 import json
-
+import logging
+import LogUtils
 comparisons = ["title", "numEps", "imgUrl", "release", "synopsis", "genres"]
 def connect():
+    logging.info("Attempting to connect to mongodb")
     client = MongoClient()
+    logging.info("Connection success!")
     db = client.Anime
+    logging.info("Working with the Anime collection")
     return db
 
 def areEntriesSame(entry1, entry2):
@@ -22,11 +26,12 @@ def addToDB(season, anime_list):
 
         existing_doc = db[season].find_one({"title":anime.title})
         if existing_doc is None:
-            print("Inserting new document with title: " + anime.title)
+            logging.info("Inserting new document with title: " + anime.title)
             collection.insert_one(j)
         elif areEntriesSame(existing_doc, j):
-            print("Identical document with title: " + anime.title)
+            logging.info("Identical document with title: " + anime.title)
         else:
-            print("Document with title " + anime.title + " needs to be updated")
+            logging.info("Document with title " + anime.title + " needs to be updated")
             db[season].replace_one({"title":anime.title}, j)
+    logging.info("Successfully imported given season into db")
 

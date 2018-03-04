@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup as soup
 from urllib.request import urlopen
+import LogUtils
+import logging
 
 this_season = 0 
 
@@ -100,11 +102,14 @@ def clean_str(item):
     return item
 
 def scrape(url):
+    logging.info("Beginning to scrape page with url: " + url)
     page_soup = loadSoup(url)
+    logging.info("Loaded " + url + " into BS")
     this_season = str(page_soup.find("a", {"class":"on"}).string).replace("  ", "").replace("\n", "")
-    
-    page_anime = page_soup.find_all("div", {"class":"seasonal-anime js-seasonal-anime"})
 
+    page_anime = page_soup.find_all("div", {"class":"seasonal-anime js-seasonal-anime"})
+    logging.info("Found anime section of page")
+    logging.info("Scraping all anime...")
     list_anime = []
     for anime in page_anime:
         title = clean_str(str(anime.find("a", {"class":"link-title"}).string))
@@ -126,4 +131,7 @@ def scrape(url):
 
         list_anime.append(Anime(title, numEps, image, release, synopsis, genres))
 
+    logging.info("Scraping complete!")
+
+    logging.info("Scraped " + str(len(list_anime)) + " anime from season " + str(this_season))
     return list_anime
