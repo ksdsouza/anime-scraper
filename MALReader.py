@@ -8,17 +8,24 @@ class Anime:
         self.title = title
         self.numEps = numEps
         self.imgUrl = imgUrl
-        self.release = release
+        self.release = release.strip('\n').strip('\r')
         self.synopsis = synopsis
         self.genres = genres
         self.synopsis_to_print = self.synopsis[0:97] + "..." if(len(self.synopsis) > 97) else synopsis
     def __str__(self):
-                return "{" + 'title:' + str(self.title) + "," +\
-                'numEps:' +  self.numEps + "," +\
-                'imgUrl:' + self.imgUrl + "," + \
-                'release:' + self.release + "," +\
-                'synopsis:' + self.synopsis_to_print + "," +\
-                'genres:' + str(self.genres) + "}"
+        return "{" + '"title":"' + str(self.title) + '",' +\
+        '"numEps":"' +  self.numEps + '",' +\
+        '"imgUrl":"' + self.imgUrl + '",' + \
+        '"release":"' + self.release + '",' +\
+        '"synopsis":"' + self.synopsis_to_print + '",' +\
+        '"genres":' + str(self.genres).replace('\'', '"') + "}"
+    def toJSONString(self):
+        return "{" + '"title":"' + str(self.title) + '",' +\
+        '"numEps":"' +  self.numEps + '",' +\
+        '"imgUrl":"' + self.imgUrl + '",' + \
+        '"release":"' + self.release + '",' +\
+        '"synopsis":"' + self.synopsis + '",' +\
+        '"genres":' + str(self.genres).replace('\'', '"') + "}"
 
 class MALSeason:
     @staticmethod
@@ -29,7 +36,7 @@ class MALSeason:
 
     @staticmethod
     def __map_to_string(season_num):
-        options = {0:"Winter", 1:"Spring", 2:"Summer", 3:"Fall"}
+        options = {0:"winter", 1:"spring", 2:"summer", 3:"fall"}
         return options[season_num]
 
     def __init__(self, season=""):
@@ -37,7 +44,6 @@ class MALSeason:
             season = MALSeason.__current_season().split(" ")
         elif(season == ""):
             season = this_season
-        print(season)
         month = season[0]
         if ("Winter" in month):
             self.season = 0
@@ -86,27 +92,38 @@ def loadSoup(url):
     page_soup = soup(page_html, "html.parser")
     return page_soup
     
+def clean_str(item):
+    item = item.replace('"', '&quot;')
+    item = item.replace('\n', '\\n')
+    mpa = dict.fromkeys(range(32))
+    item = item.translate(mpa)
+    return item
 
 def scrape(url):
     page_soup = loadSoup(url)
     this_season = str(page_soup.find("a", {"class":"on"}).string).replace("  ", "").replace("\n", "")
     
-
     page_anime = page_soup.find_all("div", {"class":"seasonal-anime js-seasonal-anime"})
 
     list_anime = []
     for anime in page_anime:
-        title = str(anime.find("a", {"class":"link-title"}).string)
+        title = clean_str(str(anime.find("a", {"class":"link-title"}).string))
+
         numEps = anime.find("div", {"class":"eps"}).find("span").string.split(' ')[0]
+
         image = anime.find("img")
+
         if image.has_attr('class'):
             image = image['data-src']
         else:
             image = image['src']
 
         release = str(anime.find("span", {"class":"remain-time"}).string).replace("  ","")
-        synopsis = str(anime.find("span", {"class":"preline"}).string)
+
+        synopsis = clean_str(str(anime.find("span", {"class":"preline"}).string))
+
         genres = list(g.find("a").string for g in anime.find_all("span", {"class":"genre"}))
 
         list_anime.append(Anime(title, numEps, image, release, synopsis, genres))
+
     return list_anime

@@ -1,5 +1,6 @@
 from MALReader import scrape
 from MALReader import MALSeason
+from ServerController import addToDB 
 import time
 import threading
 ONE_HOUR = 3600
@@ -18,7 +19,9 @@ def main():
             for i in range(NUM_OF_PAST_SEASONS):
                 season_date.decrement()
                 print("Scraping for season: " + str(season_date))
+                print(season_date.get_url_for_season())
                 anime_list = scrape(season_date.get_url_for_season())
+                addToDB(str(season_date), anime_list)
 
             for i in range(NUM_OF_PAST_SEASONS):
                 season_date.increment()
@@ -26,7 +29,9 @@ def main():
             for i in range(NUM_OF_FUTURE_SEASONS):
                 season_date.increment()
                 print("Scraping for season: " + str(season_date))
+                print(season_date.get_url_for_season())
                 anime_list = scrape(season_date.get_url_for_season())
+                addToDB(str(season_date), anime_list)
 
             print("Scraping done. sleeping for " + str(ONE_HOUR) + " seconds")
             time.sleep(ONE_HOUR)
