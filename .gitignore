@@ -2,5 +2,6 @@ anime
 __pycache__/
 *.pyc
 logs/
-tohru/project/*
-tohru/target/*
+tohru/project/**/
+tohru/target/**/
+tohru/.idea/libraries/**/

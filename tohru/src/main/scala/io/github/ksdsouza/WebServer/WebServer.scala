@@ -2,11 +2,14 @@ package io.github.ksdsouza.WebServer
 
 
 
+import java.io.InputStream
 import java.util.Properties
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
+import org.mongodb.scala.MongoClient
 
 import scala.io.StdIn
 
@@ -14,21 +17,27 @@ object MainRouter {
   val routes = GetRouter.route
 }
 
-object WebServer {
-  def main(args: Array[String]) {
 
+
+object WebServer {
+  val client = MongoClient("mongodb://localhost:27017")
+
+  def main(args: Array[String]) {
     implicit val system = ActorSystem("my-system")
+
+    def onComplete(): Unit ={
+      client.close()
+      system.terminate()
+    }
+
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
     val properties = new Properties()
     properties.load(getClass.getResourceAsStream("Server.properties"))
-
-    //val url = properties.getProperty("url")
-    //val port = properties.getProperty("port").toInt
-    val url = "0.0.0.0"
-    val port = 8085
+    val url = properties.getProperty("url")
+    val port = properties.getProperty("port").toInt
 
     val bindingFuture = Http().bindAndHandle(MainRouter.routes, url, port)
 
@@ -36,6 +45,6 @@ object WebServer {
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => system.terminate()) // and shutdown when done
+      .onComplete(_ => onComplete()) // and shutdown when done
   }
 }

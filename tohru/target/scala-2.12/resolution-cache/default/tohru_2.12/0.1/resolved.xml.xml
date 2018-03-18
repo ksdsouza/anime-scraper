@@ -4,7 +4,7 @@
 		module="tohru_2.12"
 		revision="0.1"
 		status="integration"
-		publication="20180317213605"
+		publication="20180318185201"
 	>
 		<description>
 		tohru
@@ -34,5 +34,7 @@
 		<dependency org="org.scala-lang" name="scala-library" rev="2.12.4" conf="scala-tool->default,optional(default);compile->default(compile)"/>
 		<dependency org="com.typesafe.akka" name="akka-http_2.12" rev="10.1.0" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.akka" name="akka-stream_2.12" rev="2.5.11" conf="compile->default(compile)"/>
+		<dependency org="org.mongodb.scala" name="mongo-scala-driver_2.12" rev="2.2.1" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.module" name="jackson-module-scala" rev="2.0.2" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
