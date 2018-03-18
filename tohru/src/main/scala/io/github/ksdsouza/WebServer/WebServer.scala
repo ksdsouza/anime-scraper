@@ -25,8 +25,10 @@ object WebServer {
     val properties = new Properties()
     properties.load(getClass.getResourceAsStream("Server.properties"))
 
-    val url = properties.getProperty("url")
-    val port = properties.getProperty("port").toInt
+    //val url = properties.getProperty("url")
+    //val port = properties.getProperty("port").toInt
+    val url = "0.0.0.0"
+    val port = 8085
 
     val bindingFuture = Http().bindAndHandle(MainRouter.routes, url, port)
 

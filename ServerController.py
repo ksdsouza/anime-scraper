@@ -26,12 +26,12 @@ def addToDB(season, anime_list):
 
         existing_doc = db[season].find_one({"title":anime.title})
         if existing_doc is None:
-            logging.info("Inserting new document with title: " + anime.title)
+            logging.info("Inserting new document with title: " + str(anime.title.encode('ascii', 'ignore')))
             collection.insert_one(j)
         elif areEntriesSame(existing_doc, j):
-            logging.info("Identical document with title: " + anime.title)
+            logging.info("Identical document with title: " + str(anime.title.encode('ascii', 'ignore')))
         else:
-            logging.info("Document with title " + anime.title + " needs to be updated")
+            logging.info("Document with title " + str(anime.title.encode('ascii', 'ignore')) + " needs to be updated")
             db[season].replace_one({"title":anime.title}, j)
     logging.info("Successfully imported given season into db")
 
