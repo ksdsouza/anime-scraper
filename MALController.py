@@ -9,7 +9,7 @@ import time
 
 SLEEP_TIME= 3600 * 4
 NUM_OF_PAST_SEASONS = 2
-NUM_OF_FUTURE_SEASONS = 2
+NUM_OF_FUTURE_SEASONS = 1
 
 def main():
     current_season_url = "https://myanimelist.net/anime/season"
@@ -24,6 +24,9 @@ def main():
 
             season_date = MALSeason()  
             logging.info("Current season is: " + str(season_date))
+            logging.info("Adding season to database")
+            addToDB(str(season_date), anime_list)
+            logging.info("Season added successfully")
 
             for i in range(NUM_OF_PAST_SEASONS):
                 season_date.decrement()
@@ -43,6 +46,7 @@ def main():
 
                 logging.info("Scraping for season: " + str(season_date))
                 logging.info(season_date.get_url_for_season())
+                anime_list = scrape(season_date.get_url_for_season())
 
                 logging.info("Season scraped successfully")
                 logging.info("Adding season to database")

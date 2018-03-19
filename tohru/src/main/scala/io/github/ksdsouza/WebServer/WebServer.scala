@@ -2,12 +2,10 @@ package io.github.ksdsouza.WebServer
 
 
 
-import java.io.InputStream
 import java.util.Properties
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
 import org.mongodb.scala.MongoClient
 

@@ -2,7 +2,6 @@ package io.github.ksdsouza.WebServer
 
 import akka.http.scaladsl.server.Directives._
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.mongodb.scala.MongoClient
 
 object GetRouter {
   val route =
